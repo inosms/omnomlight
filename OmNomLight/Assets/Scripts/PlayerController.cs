@@ -5,12 +5,12 @@ public class PlayerController : MonoBehaviour {
     public bool canMove;
     public float speed;
 
-    private Rigidbody2D rigidbody;
+    private Rigidbody2D controller;
     private Vector2 moveThisFrame;
 
 	// Use this for initialization
 	void Awake () {
-        rigidbody = GetComponent<Rigidbody2D>();
+        controller = GetComponent<Rigidbody2D>();
 	}
 	
 	// Update is called once per frame
@@ -26,11 +26,40 @@ public class PlayerController : MonoBehaviour {
 
         move = move * speed;
 
-        moveThisFrame = move;
+        if (canMove)
+        {
+            moveThisFrame = move;
+        }
+        else
+        {
+            moveThisFrame = Vector2.zero;
+        }
+        resolveValidPosition();
+
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            canMove = !canMove;
+        }
 	}
 
     void FixedUpdate() 
     {
-        rigidbody.velocity = moveThisFrame;
+        controller.velocity = moveThisFrame;
+    }
+
+    void resolveValidPosition()
+    {
+        if(CompareTag("Monster"))
+        {
+            bool isLit = LightSource.isLit(transform.position);
+
+            GetComponent<Renderer>().materials[0].color = isLit ? Color.red : Color.green;
+        }
+        else if (CompareTag("Human"))
+        {
+            bool isLit = LightSource.isLit(transform.position);
+
+            GetComponent<Renderer>().materials[0].color = isLit ? Color.blue : Color.red;
+        }
     }
 }
