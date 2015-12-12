@@ -69,6 +69,8 @@ public class LineSorter : IComparer<Line>
     }
 }
 
+[RequireComponent(typeof(MeshFilter))]
+[RequireComponent(typeof(MeshRenderer))]
 public class LightSource : MonoBehaviour
 {
     public static List<LightSource> lightSources = new List<LightSource>();
