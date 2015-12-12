@@ -1,10 +1,15 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+[RequireComponent(typeof(SpriteRenderer))]
 public class PlayerController : MonoBehaviour {
     public bool canMove;
     public float initialSpeed;
     public float minSpeed;
+
+    //appearance related
+    public Sprite up, down, side;
+    private SpriteRenderer spriteRenderer;
 
     private Rigidbody2D controller;
     private Vector2 moveThisFrame;
@@ -13,6 +18,7 @@ public class PlayerController : MonoBehaviour {
 	// Use this for initialization
 	void Awake () {
         controller = GetComponent<Rigidbody2D>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
 	}
 	
 	// Update is called once per frame
@@ -67,18 +73,22 @@ public class PlayerController : MonoBehaviour {
         float targetBrakeFactor = 0f;
         if(CompareTag("Monster"))
         {
-            targetColor = isLit ? Color.red : Color.green;
+            targetColor = isLit ? Color.blue : Color.white;
             targetBrakeFactor = isLit ? 1 : 0;
         }
         else// if (CompareTag("Human"))
         {
-            targetColor = isLit ? Color.blue : Color.red;
+            targetColor = isLit ? Color.white : Color.red;
             targetBrakeFactor = isLit ? 0 : 1;
         }
 
-        GetComponent<Renderer>().materials[0].color = Color.Lerp(GetComponent<Renderer>().materials[0].color, targetColor, Time.deltaTime * 3);
+        spriteRenderer.color = Color.Lerp(spriteRenderer.color, targetColor, Time.deltaTime * 3);
 
         //slow down character TODO lerp faster
         lightBrakeFactor = Mathf.Lerp(lightBrakeFactor, targetBrakeFactor, Time.deltaTime * 10);
+    }
+
+    void selectCorrectSprite()
+    {
     }
 }
