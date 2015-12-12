@@ -15,8 +15,19 @@ public class PlayerController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        float x = Input.GetAxis("Horizontal");
-        float y = Input.GetAxis("Vertical");
+        float x = 0;
+        float y = 0;
+        if (CompareTag("Monster"))
+        {
+            x = Input.GetAxis("HorizontalController");
+            y = Input.GetAxis("VerticalController");
+        }
+        else if (CompareTag("Human"))
+        {
+            x = Input.GetAxis("Horizontal");
+            y = Input.GetAxis("Vertical");
+        }
+        
 
         Vector2 move = new Vector2(x, y);
         if (move.magnitude > 1)
@@ -35,11 +46,6 @@ public class PlayerController : MonoBehaviour {
             moveThisFrame = Vector2.zero;
         }
         resolveValidPosition();
-
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            canMove = !canMove;
-        }
 	}
 
     void FixedUpdate() 
