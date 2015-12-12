@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class FridgeTriggerField : MonoBehaviour 
+public class TriggerField : MonoBehaviour 
 {
 	public bool humanIsHere = false;
 	public bool monsterIsHere = false;

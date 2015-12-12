@@ -8,7 +8,7 @@ public class Fridge : MonoBehaviour {
 
 	private List<Collectible> m_foodList = new List<Collectible>();
 	private LightSource m_lightSource;
-	private FridgeTriggerField triggerField;
+	private TriggerField triggerField;
 	private SpriteRenderer spriteRenderer;
 
 	public Sprite fridgeClosed;
@@ -31,11 +31,12 @@ public class Fridge : MonoBehaviour {
 	void Start()
 	{
 		m_lightSource = GetComponentInChildren<LightSource>();
-		triggerField = GetComponentInChildren<FridgeTriggerField>();
+		triggerField = GetComponentInChildren<TriggerField>();
 		spriteRenderer = GetComponent<SpriteRenderer>();
 
 		monster = GameObject.FindWithTag("Monster");
 		human = GameObject.FindWithTag("Human");
+		m_fuseBox = GameObject.FindObjectOfType<FuseBox>();
 		gameState = GameObject.FindObjectOfType<GameState>();
 	}
 
@@ -44,14 +45,7 @@ public class Fridge : MonoBehaviour {
 	void Update () 
 	{
 		// update light source
-		// FIXME: remove m_fuseBox; this only as long as this is not initialized
 		if( m_fuseBox && m_fuseBox.isActivated && m_doorState == DoorState.OPEN )
-			m_lightSource.SetIsOn(true);
-		else
-			m_lightSource.SetIsOn(false);
-
-		// FIXME use the above block when fuse box is implemented!
-		if( m_doorState == DoorState.OPEN)
 			m_lightSource.SetIsOn(true);
 		else
 			m_lightSource.SetIsOn(false);
