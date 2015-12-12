@@ -1,11 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class MainMenu : MonoBehaviour {
+public class MonsterWins : MonoBehaviour {
 
 	void Update () 
 	{
 		if( Input.anyKeyDown )
-			Application.LoadLevel("Level1");
+			Application.LoadLevel("MainMenu");
 	}
 }

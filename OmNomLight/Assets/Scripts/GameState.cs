@@ -11,48 +11,36 @@ public class GameState : MonoBehaviour {
 	private int eatenCollectibles = 0;
 	private int refridgeratedCollectibleds = 0;
 
-	enum WinState
-	{
-		NONE,
-		MONSTER,
-		HUMAN
-	}
-
-	private WinState winState;
-
 	// Use this for initialization
 	void Start () 
 	{
 		totalCollectibles = GameObject.FindObjectsOfType<Collectible>().Length;
 	}
-
-	// returns whether the game is won or not
-	bool IsOver()
-	{
-		return winState != WinState.NONE;
-	}
-
-	void CheckGameState()
+		
+	private void CheckGameState()
 	{
 		if( eatenCollectibles > totalCollectibles/2 )
-			winState = WinState.MONSTER;
+			Application.LoadLevel("MonsterWins");
 		else if( refridgeratedCollectibleds > totalCollectibles/2 )
-			winState = WinState.HUMAN;
+			Application.LoadLevel("HumanWins");
 	}
 
 	public void MonsterEatsOneFood()
 	{
 		eatenCollectibles++;
+		CheckGameState();
 	}
 
 	public void HumanRefridgeratesOneFood()
 	{
 		refridgeratedCollectibleds++;
+		CheckGameState();
 	}
 
 	public void OneFoodIsRemovedFromFridge()
 	{
 		refridgeratedCollectibleds--;
+		CheckGameState();
 	}
 
 }
