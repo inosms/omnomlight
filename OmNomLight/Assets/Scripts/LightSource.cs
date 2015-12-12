@@ -98,6 +98,7 @@ public class LightSource : MonoBehaviour
 
     public float minimumVertexDistance = 0.1f;
     public Mesh litAreaMesh;
+    public FuseBox fuseBox;
 
     private Vector2 lastFramePosition;
     void Awake()
@@ -118,7 +119,8 @@ public class LightSource : MonoBehaviour
             transform.position = worldpoint;
         }
 
-        if (isOn)
+
+        if (((fuseBox && fuseBox.isActivated) || !fuseBox) && isOn)
         {
             //clear lists
             triangles.Clear();
