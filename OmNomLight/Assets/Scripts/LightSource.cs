@@ -77,6 +77,7 @@ public class LightSource : MonoBehaviour
     public bool DrawTriangles = true;
     public bool DrawLines = false;
     public Transform testPoint;
+    public bool hasChanged = true;
 
     //stores all corner points of all light obestacles
     private List<Vector2> corners = new List<Vector2>();
@@ -86,15 +87,27 @@ public class LightSource : MonoBehaviour
     public List<Triangle> triangles = new List<Triangle>();
 
     public float minimumVertexDistance = 0.1f;
+    public Mesh litAreaMesh;
 
+    private Vector2 lastFramePosition;
     void Awake()
     {
         lightSources.Add(this);
+        lastFramePosition = transform.position;
+        litAreaMesh = GetComponent<MeshFilter>().mesh;
     }
 
 	// Update is called once per frame
 	void Update () 
     {
+        if (Input.GetMouseButton(0))
+        {
+            Vector3 worldpoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            worldpoint.z = 0;
+
+            transform.position = worldpoint;
+        }
+
         if (isOn)
         {
             //clear lists
@@ -103,8 +116,13 @@ public class LightSource : MonoBehaviour
             triangles.Clear();
 
             calculateLitArea();
+
+            if(!lastFramePosition.Equals(transform.position))
+            {
+                hasChanged = true;
+                lastFramePosition = transform.position;
+            }
         }
-        
 	}
 
     void calculateLitArea() 
@@ -140,16 +158,17 @@ public class LightSource : MonoBehaviour
             Vector3 dir2 = Quaternion.AngleAxis(-0.1f, Vector3.back) * dir1;
 
             //Cast rays in scene
+            int layerMask = 1 << LayerMask.NameToLayer("Obstacle");
             Line line0 = new Line();
-            if (hit0 = Physics2D.Raycast(pos, dir0))
+            if (hit0 = Physics2D.Raycast(pos, dir0, Mathf.Infinity, layerMask))
             {
                 line0.start = pos;
                 line0.end = hit0.point;
                 lines.Add(line0);
             }
 
-            
-            if (hit1 = Physics2D.Raycast(pos, dir1))
+
+            if (hit1 = Physics2D.Raycast(pos, dir1, Mathf.Infinity, layerMask))
             {
                 Line line1 = new Line();
                 line1.start = pos;
@@ -159,7 +178,7 @@ public class LightSource : MonoBehaviour
             }
 
             Line line2 = new Line();
-            if (hit2 = Physics2D.Raycast(pos, dir2))
+            if (hit2 = Physics2D.Raycast(pos, dir2, Mathf.Infinity, layerMask))
             {
                 line2.start = pos;
                 line2.end = hit2.point;
@@ -197,6 +216,8 @@ public class LightSource : MonoBehaviour
         lastT.point2 = lines[lines.Count - 1].end;
         triangles.Add(lastT);
 
+        generateMesh();
+
         if (DrawTriangles)
         {
             foreach (Triangle t in triangles)
@@ -212,8 +233,6 @@ public class LightSource : MonoBehaviour
                 Debug.DrawLine(transform.position, polygonVerts[i], Color.red);
             }
         }
-
-        //Debug.Log(isLit(testPoint.position));
     }
 
     void sortLinesByDirection()
@@ -249,6 +268,59 @@ public class LightSource : MonoBehaviour
         return result;
     }
 
+    void generateMesh()
+    {
+        litAreaMesh.Clear();
+
+        //find out furthest point for uv
+        float longestLength = longestLineLength();
+
+        List<Vector3> vertices = new List<Vector3>(triangles.Count * 2 + 1);
+        List<int> trianglesList = new List<int>(triangles.Count * 3 + 1);
+        List<Vector2> uvList = new List<Vector2>(triangles.Count * 2 + 1);
+
+        //add center
+        vertices.Add(transform.InverseTransformPoint(transform.position));
+        uvList.Add(new Vector2(0, 0));
+
+        for(int i = 0; i < triangles.Count - 1; i++)
+        {
+            Triangle t = triangles[i];
+
+            trianglesList.Add(0);
+
+            trianglesList.Add(vertices.Count);
+            vertices.Add(transform.InverseTransformPoint(t.point2));
+            uvList.Add(new Vector2(Vector2.Distance(t.point0, t.point2) / longestLength, 0));
+
+            trianglesList.Add(vertices.Count);
+            vertices.Add(transform.InverseTransformPoint(t.point1));
+            uvList.Add(new Vector2(Vector2.Distance(t.point0, t.point1) / longestLength, 0));
+        }
+        //add last triangle
+        trianglesList.AddRange(new int[] {2, vertices.Count - 1, 0});
+
+        litAreaMesh.SetVertices(vertices);
+        litAreaMesh.SetTriangles(trianglesList, 0);
+        litAreaMesh.SetUVs(0, uvList);
+
+        litAreaMesh.RecalculateNormals();
+    }
+
+    private float longestLineLength()
+    {
+        float result = 0;
+
+        foreach (Line l in lines)
+        {
+            float dist = Vector2.Distance(l.start, l.end);
+            if (dist > result)
+                result = dist;
+        }
+
+        return result;
+    }
+
     //see http://stackoverflow.com/questions/2049582/how-to-determine-a-point-in-a-2d-triangle
     public bool isLit(Vector2 point)
     {
@@ -264,6 +336,16 @@ public class LightSource : MonoBehaviour
         }
 
         return false;
+    }
+
+    public void SetIsOn(bool isOn)
+    {
+        if (isOn != this.isOn)
+        {
+            hasChanged = true;
+        }
+
+        this.isOn = isOn;
     }
 
 

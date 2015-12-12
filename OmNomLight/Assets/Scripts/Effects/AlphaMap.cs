@@ -5,15 +5,39 @@ using System.Collections.Generic;
 
 public class AlphaMap : MonoBehaviour
 {
-    public Material mat;
+    /*public Material mat;
 
+    bool recalculate = true;
+    Texture2D alphaMask;
     //Basically only applies image effect
     void OnRenderImage(RenderTexture src, RenderTexture dest)
     {
-        /*
+        foreach(LightSource l in LightSource.lightSources)
+        {
+            if(l.hasChanged)
+            {
+                recalculate = true;
+            }
+
+            l.hasChanged = false;
+        }
+
+        if (recalculate)
+        {
+            recalculateTexture(src, dest);
+            recalculate = false;
+        }
+        else
+        {
+            Graphics.Blit(src, dest, mat);
+        }
+    }
+
+    private void recalculateTexture(RenderTexture src, RenderTexture dest)
+    {
         int width = src.width;
         int height = src.height;
-        Texture2D alphaMask = new Texture2D(width, height);
+        alphaMask = new Texture2D(width, height);
 
         //calculate alpha mask
         Color[] pixels = new Color[width * height];
@@ -29,7 +53,7 @@ public class AlphaMap : MonoBehaviour
         }
 
         //transform triangles into screen space
-        for(int i = 0; i < triangles.Count; i++)
+        for (int i = 0; i < triangles.Count; i++)
         {
             Triangle screenSpaceTriangle;
             screenSpaceTriangle.point0 = Camera.main.WorldToScreenPoint(triangles[i].point0);
@@ -38,35 +62,32 @@ public class AlphaMap : MonoBehaviour
 
             triangles[i] = screenSpaceTriangle;
         }
-        bool bla = false;
-        //check for each pixel whether it is inside of a triangle (yes -> white, no -> black)
-        for (int i = 0; i < triangles.Count; i++)
-        {
-            Triangle t = triangles[i];
-            float[] pointsX = { t.point0.x, t.point1.x, t.point2.x };
-            float[] pointsY = { t.point0.y, t.point1.y, t.point2.y };
-            int minX = Mathf.RoundToInt(Mathf.Min(pointsX));
-            int maxX = Mathf.RoundToInt(Mathf.Max(pointsX));
-            int minY = Mathf.RoundToInt(Mathf.Min(pointsY));
-            int maxY = Mathf.RoundToInt(Mathf.Max(pointsY));
 
-            for (int x = minX; x < maxX; x++)
+        //check for each pixel whether it is inside of a triangle (yes -> white, no -> black)
+        for (int x = 0; x < width; x++)
+        {
+            for (int y = 0; y < height; y++)
             {
-                for (int y = minY; y < maxY; y++)
+                foreach (Triangle t in triangles)
                 {
-                    black_or_white[y * width + x] = t.isPointInside(new Vector2(x, y)); 
+                    if (t.isPointInside(new Vector2(x, y)))
+                    {
+                        black_or_white[y * width + x] = true;
+                        break;
+                    }
                 }
             }
         }
 
-        for (int i = 0; i < black_or_white.Length; i++)
+        for (int x = 0; x < width; x++)
         {
-            alphaMask.SetPixel(i % width, i / width, black_or_white[i] ? Color.white : Color.black);
+            for (int y = 0; y < height; y++)
+                alphaMask.SetPixel(x, height - y, black_or_white[y * width + x] ? Color.white : Color.black);
         }
 
         alphaMask.Apply();
 
-        mat.SetTexture("_AlphaMask", alphaMask);*/
+        mat.SetTexture("_AlphaMask", alphaMask);
         Graphics.Blit(src, dest, mat);
-    }
+    }*/
 }
