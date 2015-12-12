@@ -76,7 +76,6 @@ public class LightSource : MonoBehaviour
     public bool isOn = true;
     public bool DrawTriangles = true;
     public bool DrawLines = false;
-    public Transform testPoint;
 
     //stores all corner points of all light obestacles
     private List<Vector2> corners = new List<Vector2>();
@@ -86,6 +85,7 @@ public class LightSource : MonoBehaviour
     public List<Triangle> triangles = new List<Triangle>();
 
     public float minimumVertexDistance = 0.1f;
+    public FuseBox fuseBox;
 
     void Awake()
     {
@@ -95,7 +95,19 @@ public class LightSource : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
     {
-        if (isOn)
+        if (fuseBox && fuseBox.isActivated)
+        {
+            if (isOn)
+            {
+                //clear lists
+                corners.Clear();
+                lines.Clear();
+                triangles.Clear();
+
+                calculateLitArea();
+            }
+        }
+        else if (isOn)
         {
             //clear lists
             corners.Clear();
@@ -104,6 +116,7 @@ public class LightSource : MonoBehaviour
 
             calculateLitArea();
         }
+
         
 	}
 
