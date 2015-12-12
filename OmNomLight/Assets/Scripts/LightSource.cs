@@ -103,11 +103,9 @@ public class LightSource : MonoBehaviour
     public Mesh litAreaMesh;
     public FuseBox fuseBox;
 
-    private Vector2 lastFramePosition;
     void Awake()
     {
         lightSources.Add(this);
-        lastFramePosition = transform.position;
         litAreaMesh = GetComponent<MeshFilter>().mesh;
     }
 
@@ -330,7 +328,9 @@ public class LightSource : MonoBehaviour
 
         //add center
         vertices.Add(transform.InverseTransformPoint(transform.position));
-        uvList.Add(new Vector2(0, 0));
+        Vector2 uv0 = Camera.main.ScreenToViewportPoint(transform.position);
+        uv0.x = 1 - uv0.x;
+        uvList.Add(uv0);
 
         for (int i = 0; i < triangles.Count - 1; i++)
         {
@@ -340,11 +340,17 @@ public class LightSource : MonoBehaviour
 
             trianglesList.Add(vertices.Count);
             vertices.Add(transform.InverseTransformPoint(t.point2));
-            uvList.Add(new Vector2(Vector2.Distance(t.point0, t.point2) / longestLength, 0));
+            Vector2 uv1 = Camera.main.ScreenToViewportPoint(t.point2);
+            uv1.x = 1 - uv1.x;
+            uvList.Add(uv1);
+            //uvList.Add(new Vector2(Vector2.Distance(t.point0, t.point2) / longestLength, 0));
 
             trianglesList.Add(vertices.Count);
             vertices.Add(transform.InverseTransformPoint(t.point1));
-            uvList.Add(new Vector2(Vector2.Distance(t.point0, t.point1) / longestLength, 0));
+            Vector2 uv2 = Camera.main.ScreenToViewportPoint(t.point1);
+            uv2.x = 1 - uv2.x;
+            uvList.Add(uv2);
+            //uvList.Add(new Vector2(Vector2.Distance(t.point0, t.point1) / longestLength, 0));
         }
         //add last triangle
         trianglesList.AddRange(new int[] { 2, vertices.Count - 2, 0 });
