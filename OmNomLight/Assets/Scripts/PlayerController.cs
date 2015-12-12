@@ -3,10 +3,12 @@ using System.Collections;
 
 public class PlayerController : MonoBehaviour {
     public bool canMove;
-    public float speed;
+    public float initialSpeed;
+    public float minSpeed;
 
     private Rigidbody2D controller;
     private Vector2 moveThisFrame;
+    private float lightBrakeFactor = 0f;
 
 	// Use this for initialization
 	void Awake () {
@@ -35,7 +37,9 @@ public class PlayerController : MonoBehaviour {
             move = move.normalized;
         }
 
-        move = move * speed;
+        resolveValidPosition();
+
+        move = move * (initialSpeed * (1 - lightBrakeFactor) + minSpeed * lightBrakeFactor);
 
         if (canMove)
         {
@@ -45,7 +49,7 @@ public class PlayerController : MonoBehaviour {
         {
             moveThisFrame = Vector2.zero;
         }
-        resolveValidPosition();
+        
 	}
 
     void FixedUpdate() 
@@ -55,17 +59,26 @@ public class PlayerController : MonoBehaviour {
 
     void resolveValidPosition()
     {
+        //determine if lit
+        bool isLit = LightSource.isLit(transform.position);
+       
+        //determine color
+        Color targetColor;
+        float targetBrakeFactor = 0f;
         if(CompareTag("Monster"))
         {
-            bool isLit = LightSource.isLit(transform.position);
-
-            GetComponent<Renderer>().materials[0].color = isLit ? Color.red : Color.green;
+            targetColor = isLit ? Color.red : Color.green;
+            targetBrakeFactor = isLit ? 1 : 0;
         }
-        else if (CompareTag("Human"))
+        else// if (CompareTag("Human"))
         {
-            bool isLit = LightSource.isLit(transform.position);
-
-            GetComponent<Renderer>().materials[0].color = isLit ? Color.blue : Color.red;
+            targetColor = isLit ? Color.blue : Color.red;
+            targetBrakeFactor = isLit ? 0 : 1;
         }
+
+        GetComponent<Renderer>().materials[0].color = Color.Lerp(GetComponent<Renderer>().materials[0].color, targetColor, Time.deltaTime * 3);
+
+        //slow down character TODO lerp faster
+        lightBrakeFactor = Mathf.Lerp(lightBrakeFactor, targetBrakeFactor, Time.deltaTime * 10);
     }
 }

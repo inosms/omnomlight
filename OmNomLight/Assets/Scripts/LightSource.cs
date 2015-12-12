@@ -118,13 +118,16 @@ public class LightSource : MonoBehaviour
 
             transform.position = worldpoint;
         }
-
+        //clear lists
+        triangles.Clear();
 
         if (((fuseBox && fuseBox.isActivated) || !fuseBox) && isOn)
         {
-            //clear lists
-            triangles.Clear();
             calculateLitArea();
+        }
+        else
+        {
+            litAreaMesh.Clear();
         }
     }
 
