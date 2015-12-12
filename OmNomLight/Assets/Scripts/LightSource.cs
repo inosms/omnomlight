@@ -133,8 +133,9 @@ public class LightSource : MonoBehaviour
         return null;
     }
 
-    protected virtual void filterLines(List<Line> lines)
+    protected virtual List<Line> filterLines(List<Line> lines)
     {
+        return lines;
     }
 
     private List<Vector2> getCorners()
@@ -202,6 +203,13 @@ public class LightSource : MonoBehaviour
                 line1.end = hit1.point;
 
                 lines.Add(line1);
+
+                //count rays to corners
+                LightObstacle lo = hit1.collider.GetComponent<LightObstacle>();
+                if (lo)
+                {
+                    lo.incrementLightedCorners();
+                }
             }
 
             Line line2 = new Line();
@@ -226,7 +234,7 @@ public class LightSource : MonoBehaviour
 
         polygonVerts = mergeCloseVertices(polygonVerts);
 
-        filterLines(lines);
+        lines = filterLines(lines);
 
         if (lines.Count == 0)
         {
@@ -243,6 +251,7 @@ public class LightSource : MonoBehaviour
 
             triangles.Add(t);
         }
+
         //create last triangle
         Triangle lastT = new Triangle();
         lastT.point0 = pos;
