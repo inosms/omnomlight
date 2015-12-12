@@ -28,7 +28,7 @@ public class FlashLight : LightSource {
         return customCorners;
     }
 
-    protected override void filterLines(List<Line> lines)
+    protected override List<Line> filterLines(List<Line> lines)
     {
         float validAngle = totalAngle / 2;
         Vector2 leftCorner = Quaternion.AngleAxis(validAngle, Vector3.back) * direction;
@@ -40,13 +40,21 @@ public class FlashLight : LightSource {
         rightLine.start = transform.position;
         rightLine.end = ((Vector2)transform.position) + rightCorner;
 
-        for (int i = lines.Count - 1; i >= 0; i--)
+        List<Line> result = new List<Line>();
+        int i;
+        for (i = 0; i < lines.Count; i++)
         {
-            Line l = lines[i];
-            if (!(l > leftLine && l < rightLine))
-            {
-               lines.Remove(l);
-            }
+            if (lines[i] > leftLine)
+                break;
         }
+
+        Line l = lines[i];
+        while (l < rightLine)
+        {
+            result.Add(l);
+            l = lines[i++];
+        }
+
+        return result;
     }
 }
