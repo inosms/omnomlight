@@ -24,6 +24,7 @@ public class FridgeTriggerField : MonoBehaviour
 		if(c.CompareTag("Human"))
 		{
 			c.GetComponent<PickUp>().isStandingInFrontOfFridge = false;
+			humanIsHere = false;
 		}
 		else if( c.CompareTag("Monster"))
 		{

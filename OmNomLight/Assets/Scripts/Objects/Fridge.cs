@@ -90,11 +90,24 @@ public class Fridge : MonoBehaviour {
 
 	private void ActionMonster()
 	{
-		if( m_doorState == DoorState.CLOSED )
-			m_doorState = DoorState.OPEN;
-		else
+		// At first open door if fuse box is deactivated
+		if( m_doorState == DoorState.CLOSED /*&& m_fuseBox && m_fuseBox.isActivated == false*/)
 		{
-			// Eat something 
+			m_doorState = DoorState.OPEN;
+			// Empty fridge
+			while( m_foodList.Count != 0 )
+			{
+				Collectible tmp_food = m_foodList[0];
+				m_foodList.RemoveAt(0);
+
+				tmp_food.gameObject.transform.position += new Vector3(Random.Range(-10,10)/10.0f,Random.Range(0,10)/10.0f,0f);
+				tmp_food.gameObject.SetActive(true);
+			}
+		}
+		// the monster can also close the door
+		else if(m_doorState == DoorState.OPEN )
+		{
+			m_doorState = DoorState.CLOSED;
 		}
 	}
 }

@@ -32,23 +32,22 @@ public class PickUp : MonoBehaviour
             }
             else if (carriedObject)
             {
-				StopCarrying();
+				// only drop the object when not directly in front of fridge,
+				// as one wants to put the food into the fridge in this case
+				if( !isStandingInFrontOfFridge )
+				{
+					StopCarrying();
+				}
             }
         }
     }
 
 	public void StopCarrying()
 	{
-		if( !isStandingInFrontOfFridge )
-		{
-			//drop the carried object
-			carriedObject.stopCarrying();
-			carriedObject = null;
-			carrying = false;
-			Debug.Log("Did drop");
-		}
-		else
-			Debug.Log("Did not drop");
+		//drop the carried object
+		carriedObject.stopCarrying();
+		carriedObject = null;
+		carrying = false;
 	}
 
 
