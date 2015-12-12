@@ -41,6 +41,22 @@ public struct Triangle
         Debug.DrawLine(point1, point2);
         Debug.DrawLine(point2, point0);
     }
+
+    public bool isPointInside(Vector2 point)
+    {
+        bool b1, b2, b3;
+
+        b1 = sign(point, point0, point1) < 0.0f;
+        b2 = sign(point, point1, point2) < 0.0f;
+        b3 = sign(point, point2, point0) < 0.0f;
+
+        return (b1 == b2) && (b2 == b3);
+    }
+
+    private float sign(Vector2 p1, Vector2 p2, Vector2 p3)
+    {
+        return (p1.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (p1.y - p3.y);
+    }
 }
 
 public class LineSorter : IComparer<Line> 
@@ -67,7 +83,7 @@ public class LightSource : MonoBehaviour
     //stores all line to draw for debugging
     private List<Line> lines = new List<Line>();
     //stores all triangles
-    private List<Triangle> triangles = new List<Triangle>();
+    public List<Triangle> triangles = new List<Triangle>();
 
     public float minimumVertexDistance = 0.1f;
 
@@ -197,7 +213,7 @@ public class LightSource : MonoBehaviour
             }
         }
 
-        Debug.Log(isLit(testPoint.position));
+        //Debug.Log(isLit(testPoint.position));
     }
 
     void sortLinesByDirection()
@@ -241,24 +257,13 @@ public class LightSource : MonoBehaviour
 
         foreach (Triangle t in triangles)
         {
-            bool b1, b2, b3;
-
-            b1 = sign(point, t.point0, t.point1) < 0.0f;
-            b2 = sign(point, t.point1, t.point2) < 0.0f;
-            b3 = sign(point, t.point2, t.point0) < 0.0f;
-
-            if ((b1 == b2) && (b2 == b3))
+            if (t.isPointInside(point))
             {
                 return true;
             }  
         }
 
         return false;
-    }
-
-    private float sign(Vector2 p1, Vector2 p2, Vector2 p3)
-    {
-        return (p1.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (p1.y - p3.y);
     }
 
 
