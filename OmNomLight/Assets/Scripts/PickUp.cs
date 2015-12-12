@@ -4,6 +4,7 @@ using System.Collections;
 public class PickUp : MonoBehaviour
 {
     public float range = 0.5f;
+	public LayerMask layerMask;
 
     bool carrying = false;
     private GetCarried carriedObject;
@@ -15,12 +16,13 @@ public class PickUp : MonoBehaviour
         {
             if(!carrying)//currently not carrying anything
             {
-                RaycastHit2D hit = Physics2D.CircleCast(transform.position, range, Vector3.back);
+				RaycastHit2D hit = Physics2D.CircleCast(transform.position, range, Vector3.back,range,layerMask);
 
                 //check the pickup zone
                 if (hit)
                 {
                     carriedObject = hit.collider.GetComponent<GetCarried>();
+					Debug.Log(hit.collider.gameObject.name);
 
                     //an object that can be carried is inside the pickup zone
                     if (carriedObject)
