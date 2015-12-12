@@ -24,6 +24,7 @@ public class Collectible : MonoBehaviour {
 
     void OnPickup()
     {
+		GameObject.FindObjectOfType<GameState>().MonsterEatsOneFood();
         Destroy(this.gameObject, 0.3f);
     }
 }

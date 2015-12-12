@@ -17,6 +17,7 @@ public class Fridge : MonoBehaviour {
 
 	private GameObject monster;
 	private GameObject human;
+	private GameState gameState;
 
 	public FuseBox m_fuseBox;
 
@@ -35,6 +36,7 @@ public class Fridge : MonoBehaviour {
 
 		monster = GameObject.FindWithTag("Monster");
 		human = GameObject.FindWithTag("Human");
+		gameState = GameObject.FindObjectOfType<GameState>();
 	}
 
 
@@ -91,6 +93,8 @@ public class Fridge : MonoBehaviour {
 				// make object invisible
 				tmp_foodThing.gameObject.SetActive(false);
 				m_foodList.Add(tmp_foodThing);
+				gameState.HumanRefridgeratesOneFood();
+
 				Debug.Log("Added thing to fridge");
 				tmp_pickUp.StopCarrying();
 			}
@@ -113,6 +117,7 @@ public class Fridge : MonoBehaviour {
 			{
 				Collectible tmp_food = m_foodList[0];
 				m_foodList.RemoveAt(0);
+				gameState.OneFoodIsRemovedFromFridge();
 
 				tmp_food.gameObject.transform.position += new Vector3(Random.Range(-10,10)/10.0f,Random.Range(0,10)/10.0f,0f);
 				tmp_food.gameObject.SetActive(true);
