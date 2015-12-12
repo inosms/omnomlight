@@ -115,8 +115,6 @@ public class PlayerController : MonoBehaviour {
             {
                 spriteRenderer.sprite = down;
             }
-
-
  
         }
     }
