@@ -2,18 +2,8 @@
 using System.Collections;
 
 [RequireComponent(typeof(Collider2D))]
-public class Collectible : MonoBehaviour {
-
-	// Use this for initialization
-	void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	    transform.Rotate(Vector3.back, 10 + Time.deltaTime);
-	}
-
+public class Collectible : MonoBehaviour 
+{
     void OnTriggerEnter2D(Collider2D c)
     {
         if(c.CompareTag("Monster"))
@@ -25,6 +15,7 @@ public class Collectible : MonoBehaviour {
     void OnPickup()
     {
 		GameObject.FindObjectOfType<GameState>().MonsterEatsOneFood();
+		this.gameObject.SetActive(false);
         Destroy(this.gameObject, 0.3f);
     }
 }
