@@ -26,7 +26,20 @@ public class PlayerController : MonoBehaviour {
 
         move = move * speed;
 
-        moveThisFrame = move;
+        if (canMove)
+        {
+            moveThisFrame = move;
+        }
+        else
+        {
+            moveThisFrame = Vector2.zero;
+        }
+        resolveValidPosition();
+
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            canMove = !canMove;
+        }
 	}
 
     void FixedUpdate() 
@@ -38,27 +51,13 @@ public class PlayerController : MonoBehaviour {
     {
         if(CompareTag("Monster"))
         {
-            bool isLit = false;
-            foreach(LightSource l in LightSource.lightSources)
-            {
-                if(l.isLit(transform.position))
-                {
-                    isLit = true;
-                }
-            }
+            bool isLit = LightSource.isLit(transform.position);
 
             GetComponent<Renderer>().materials[0].color = isLit ? Color.red : Color.green;
         }
         else if (CompareTag("Human"))
         {
-            bool isLit = false;
-            foreach (LightSource l in LightSource.lightSources)
-            {
-                if (l.isLit(transform.position))
-                {
-                    isLit = true;
-                }
-            }
+            bool isLit = LightSource.isLit(transform.position);
 
             GetComponent<Renderer>().materials[0].color = isLit ? Color.blue : Color.red;
         }
