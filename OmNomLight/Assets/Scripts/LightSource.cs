@@ -115,7 +115,12 @@ public class LightSource : MonoBehaviour
             lines.Clear();
             triangles.Clear();
 
-            calculateLitArea();
+            if (hasChanged)
+            {
+                calculateLitArea();
+                hasChanged = false;
+            }
+                
 
             if(!lastFramePosition.Equals(transform.position))
             {
@@ -298,7 +303,7 @@ public class LightSource : MonoBehaviour
             uvList.Add(new Vector2(Vector2.Distance(t.point0, t.point1) / longestLength, 0));
         }
         //add last triangle
-        trianglesList.AddRange(new int[] {2, vertices.Count - 1, 0});
+        trianglesList.AddRange(new int[] {2, vertices.Count - 2, 0});
 
         litAreaMesh.SetVertices(vertices);
         litAreaMesh.SetTriangles(trianglesList, 0);
