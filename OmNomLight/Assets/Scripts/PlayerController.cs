@@ -8,7 +8,7 @@ public class PlayerController : MonoBehaviour {
     public float minSpeed;
 
     //appearance related
-    public Sprite up, down, side;
+    public Sprite up, down, left, right;
     private SpriteRenderer spriteRenderer;
 
     private Rigidbody2D controller;
@@ -61,6 +61,7 @@ public class PlayerController : MonoBehaviour {
     void FixedUpdate() 
     {
         controller.velocity = moveThisFrame;
+        selectCorrectSprite();
     }
 
     void resolveValidPosition()
@@ -90,5 +91,33 @@ public class PlayerController : MonoBehaviour {
 
     void selectCorrectSprite()
     {
+        //dont change sprite if not moving
+        if (moveThisFrame == Vector2.zero)
+        {
+            return;
+        }
+        else
+        {
+            float horizontalDirection = Mathf.Sign(moveThisFrame.x);
+
+            float angle = Vector2.Angle(Vector2.up, moveThisFrame.normalized);
+            //Debug.Log(horizontalDirection * angle);
+
+            if (angle < 20.0f)
+            {
+                spriteRenderer.sprite = up;
+            }
+            else if (angle >= 20.0f && angle <= 160.0f)
+            {
+                spriteRenderer.sprite = (horizontalDirection == -1.0f) ? left : right;
+            }
+            else
+            {
+                spriteRenderer.sprite = down;
+            }
+
+
+ 
+        }
     }
 }
