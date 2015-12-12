@@ -7,7 +7,7 @@ public class PickUp : MonoBehaviour
 
     bool carrying = false;
     private GetCarried carriedObject;
-
+	public bool isStandingInFrontOfFridge = false;
 
     void Update()
     {
@@ -32,11 +32,29 @@ public class PickUp : MonoBehaviour
             }
             else if (carriedObject)
             {
-                //drop the carried object
-                carriedObject.stopCarrying();
-                carrying = false;
+				StopCarrying();
             }
         }
     }
+
+	public void StopCarrying()
+	{
+		if( !isStandingInFrontOfFridge )
+		{
+			//drop the carried object
+			carriedObject.stopCarrying();
+			carriedObject = null;
+			carrying = false;
+			Debug.Log("Did drop");
+		}
+		else
+			Debug.Log("Did not drop");
+	}
+
+
+	public GetCarried GetCarriedObject()
+	{
+		return carriedObject;
+	}
 
 }

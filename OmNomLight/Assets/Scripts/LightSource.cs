@@ -91,6 +91,9 @@ public class LightSource : MonoBehaviour
     public bool DrawTriangles = true;
     public bool DrawLines = false;
 
+	// for debugging:
+	public bool controlWithMouse = false;
+
     //stores all corner points of all light obestacles
     //stores all line to draw for debugging
     //stores all triangles
@@ -111,7 +114,7 @@ public class LightSource : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetMouseButton(0))
+		if (Input.GetMouseButton(0) && controlWithMouse)
         {
             Vector3 worldpoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             worldpoint.z = 0;
