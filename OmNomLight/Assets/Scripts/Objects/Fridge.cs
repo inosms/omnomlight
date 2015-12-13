@@ -3,6 +3,7 @@ using System.Collections;
 // http://answers.unity3d.com/questions/176753/c-arraylist.html
 using System.Collections.Generic;
 
+[RequireComponent(typeof(AudioSource))]
 public class Fridge : MonoBehaviour {
 
 
@@ -10,6 +11,12 @@ public class Fridge : MonoBehaviour {
 	private LightSource m_lightSource;
 	private TriggerField triggerField;
 	private SpriteRenderer spriteRenderer;
+	private AudioSource audioSource;
+
+	public AudioClip audioFridgeOpen;
+	public AudioClip audioFridgeClose;
+	public AudioClip audioPutInFridge;
+	public AudioClip audioEmptyFridge;
 
 	public Sprite fridgeClosed;
 	public Sprite fridgeOpenedEmpty;
@@ -33,6 +40,7 @@ public class Fridge : MonoBehaviour {
 		m_lightSource = GetComponentInChildren<LightSource>();
 		triggerField = GetComponentInChildren<TriggerField>();
 		spriteRenderer = GetComponent<SpriteRenderer>();
+		audioSource = GetComponent<AudioSource>();
 
 		monster = GameObject.FindWithTag("Monster");
 		human = GameObject.FindWithTag("Human");
@@ -69,11 +77,25 @@ public class Fridge : MonoBehaviour {
 		}
 	}
 
+	private void OpenDoor()
+	{
+		m_doorState = DoorState.OPEN;
+		audioSource.clip = audioFridgeOpen;
+		audioSource.Play();
+	}
+
+	private void CloseDoor()
+	{
+		m_doorState = DoorState.CLOSED;
+		audioSource.clip = audioFridgeClose;
+		audioSource.Play();
+	}
+		
 	private void ActionHuman()
 	{
 		// When door is closed, open the door
 		if( m_doorState == DoorState.CLOSED )
-			m_doorState = DoorState.OPEN;
+			OpenDoor();
 		// Otherwise put the food in
 		else
 		{
@@ -89,14 +111,15 @@ public class Fridge : MonoBehaviour {
 				m_foodList.Add(tmp_foodThing);
 				gameState.HumanRefridgeratesOneFood();
 
+				audioSource.clip = audioPutInFridge;
+				audioSource.Play();
+
 				Debug.Log("Added thing to fridge");
 				tmp_pickUp.StopCarrying();
 			}
 			// otherwise close the door
 			else
-			{
-				m_doorState = DoorState.CLOSED;
-			}
+				CloseDoor();
 		}
 	}
 
@@ -105,7 +128,7 @@ public class Fridge : MonoBehaviour {
 		// At first open door if fuse box is deactivated
 		if( m_doorState == DoorState.CLOSED /*&& m_fuseBox && m_fuseBox.isActivated == false*/)
 		{
-			m_doorState = DoorState.OPEN;
+			OpenDoor();
 			// Empty fridge
 			while( m_foodList.Count != 0 )
 			{
@@ -113,14 +136,15 @@ public class Fridge : MonoBehaviour {
 				m_foodList.RemoveAt(0);
 				gameState.OneFoodIsRemovedFromFridge();
 
+				audioSource.clip = audioEmptyFridge;
+				audioSource.Play();
+
 				tmp_food.gameObject.transform.position += new Vector3(Random.Range(-10,10)/10.0f,Random.Range(0,10)/10.0f,0f);
 				tmp_food.gameObject.SetActive(true);
 			}
 		}
 		// the monster can also close the door
 		else if(m_doorState == DoorState.OPEN )
-		{
-			m_doorState = DoorState.CLOSED;
-		}
+			CloseDoor();
 	}
 }
