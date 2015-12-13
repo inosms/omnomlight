@@ -8,7 +8,7 @@ public class Win : MonoBehaviour {
 	AudioSource musicPlayer;
 	public AudioClip clip;
 
-	void Awake()
+	void Start()
 	{
 		musicPlayer = gameObject.GetComponent<AudioSource>();
 

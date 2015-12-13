@@ -104,7 +104,7 @@ public class LightSource : MonoBehaviour
     public Mesh litAreaMesh;
     public FuseBox fuseBox;
 
-    void Awake()
+    void Start()
     {
         lightSources.Add(this);
         litAreaMesh = GetComponent<MeshFilter>().mesh;

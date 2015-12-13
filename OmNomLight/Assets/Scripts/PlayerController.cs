@@ -22,7 +22,7 @@ public class PlayerController : MonoBehaviour {
     private float lightBrakeFactor = 0f;
 
 	// Use this for initialization
-	void Awake () {
+	void Start () {
         controller = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
 	}

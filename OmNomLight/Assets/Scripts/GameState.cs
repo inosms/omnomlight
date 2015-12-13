@@ -20,10 +20,19 @@ public class GameState : MonoBehaviour {
 	private void CheckGameState()
 	{
 		if( eatenCollectibles > totalCollectibles/2 )
-			Application.LoadLevel("MonsterWins");
-		else if( refridgeratedCollectibleds > totalCollectibles/2 )
-			Application.LoadLevel("HumanWins");
-	}
+        {
+            Application.LoadLevel("MonsterWins");
+            LightSource.lightSources.Clear();
+            LightObstacle.obstacles.Clear();
+        }
+
+        else if (refridgeratedCollectibleds > totalCollectibles / 2)
+        {
+            Application.LoadLevel("HumanWins");
+            LightSource.lightSources.Clear();
+            LightObstacle.obstacles.Clear();
+        }
+    }
 
 	public void MonsterEatsOneFood()
 	{
