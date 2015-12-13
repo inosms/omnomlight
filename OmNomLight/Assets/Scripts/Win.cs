@@ -19,7 +19,7 @@ public class Win : MonoBehaviour {
 
 	void Update () 
 	{
-		if( Input.anyKeyDown && Time.timeSinceLevelLoad >= 5.0f)
+		if( Input.anyKeyDown && Time.timeSinceLevelLoad >= 1.0f)
 			Application.LoadLevel("MainMenu");
 	}
 }
