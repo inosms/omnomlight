@@ -34,7 +34,11 @@ public class PlayerController : MonoBehaviour {
         if (CompareTag("Monster"))
         {
             x = Input.GetAxis("HorizontalController");
+			if( x == 0 )
+				x = Input.GetAxis("HorizontalMonster");
             y = Input.GetAxis("VerticalController");
+			if( y == 0 )
+				y = Input.GetAxis("VerticalMonster");
         }
         else if (CompareTag("Human"))
         {
