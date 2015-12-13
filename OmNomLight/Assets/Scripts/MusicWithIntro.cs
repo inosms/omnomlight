@@ -4,13 +4,29 @@ using System.Collections;
 [RequireComponent(typeof(AudioSource))]
 public class MusicWithIntro : MonoBehaviour 
 {
-    public AudioClip intro;
-    public AudioClip loop;
-
+    private AudioClip intro;
+    private AudioClip loop;
     private AudioSource musicPlayer;
+
+	public AudioClip humanIntro;
+	public AudioClip humanLoop;
+	public AudioClip monsterIntro;
+	public AudioClip monsterLoop;
 
     void Start()
     {
+		if( Random.Range(0,2) == 0 )
+		{
+			intro = humanIntro;
+			loop = humanLoop;
+		}
+		else
+		{
+			intro = monsterIntro;
+			loop = monsterLoop;
+		}
+	
+
         musicPlayer = gameObject.GetComponent<AudioSource>();
 
         musicPlayer.clip = intro;
