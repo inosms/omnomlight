@@ -325,9 +325,6 @@ public class LightSource : MonoBehaviour
     {
         litAreaMesh.Clear();
 
-        //find out furthest point for uv
-        float longestLength = longestLineLength(lines);
-
         List<Vector3> vertices = new List<Vector3>(triangles.Count * 2 + 1);
         List<int> trianglesList = new List<int>(triangles.Count * 3 + 1);
         List<Vector2> uvList = new List<Vector2>(triangles.Count * 2 + 1);
@@ -403,6 +400,5 @@ public class LightSource : MonoBehaviour
 
         this.isOn = isOn;
     }
-
 
 }
