@@ -64,15 +64,14 @@ public class Fridge : MonoBehaviour {
 			spriteRenderer.sprite = fridgeClosed;
 
 
-		if (Input.GetButtonDown ("Pick Up")) 
-		{
+
 			// if human is at the fridge
-			if( triggerField.humanIsHere )
-				ActionHuman();
+        if (triggerField.humanIsHere && Input.GetButtonDown("Pick Up"))
+			ActionHuman();
 			// else if monster is at the fridge
-			else if( triggerField.monsterIsHere )
-				ActionMonster();
-		}
+        else if (triggerField.monsterIsHere && Input.GetButtonDown("Pick Up Controller"))
+			ActionMonster();
+		
 	}
 
 	private void OpenDoor()
@@ -137,7 +136,7 @@ public class Fridge : MonoBehaviour {
 				audioSource.clip = audioEmptyFridge;
 				audioSource.Play();
 
-				tmp_food.gameObject.transform.position += new Vector3(Random.Range(-10,10)/10.0f,Random.Range(0,10)/10.0f,0f);
+				tmp_food.gameObject.transform.position += new Vector3(Random.Range(-10,10)/10.0f,-Random.Range(0,10)/10.0f,0f);
 				tmp_food.gameObject.SetActive(true);
 			}
 		}
