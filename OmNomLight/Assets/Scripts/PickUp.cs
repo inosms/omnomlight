@@ -27,8 +27,6 @@ public class PickUp : MonoBehaviour
                 {
                     carriedObject = hit.collider.GetComponent<GetCarried>();
 
-                    Debug.Log(hit.collider.gameObject.name);
-
                     //an object that can be carried is inside the pickup zone
                     if (carriedObject)
                     {
