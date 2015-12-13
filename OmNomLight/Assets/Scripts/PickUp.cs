@@ -10,9 +10,12 @@ public class PickUp : MonoBehaviour
     private GetCarried carriedObject;
 	public bool isStandingInFrontOfFridge = false;
 
+	// the last time something was eaten
+	private float lastFoodTime = 0.0f;
+	private const float EAT_COOLDOWN_SECONDS = 1.0f; 
+
     void Update()
     {
-		
 		if(Input.GetButtonDown("Pick Up") || Input.GetButtonDown("Pick Up Controller"))
         {
             if(!carrying)//currently not carrying anything
@@ -69,8 +72,11 @@ public class PickUp : MonoBehaviour
 			gameObject.GetComponent<AudioSource>().Play();
 
 			// When Human holds the object, let the monster not eat stuff
-			if( GameObject.FindObjectOfType<PickUp>().GetCarriedObject() != this.GetComponent<GetCarried>() )
+			if( GameObject.FindObjectOfType<PickUp>().GetCarriedObject() != this.GetComponent<GetCarried>() 
+				&& Time.timeSinceLevelLoad - lastFoodTime > EAT_COOLDOWN_SECONDS )
 			{
+				lastFoodTime = Time.timeSinceLevelLoad;
+
 				GameObject.FindObjectOfType<GameState>().MonsterEatsOneFood();
 
 				GameObject.FindObjectOfType<PickUp>().StopCarrying();
