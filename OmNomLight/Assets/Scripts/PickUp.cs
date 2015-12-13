@@ -25,11 +25,13 @@ public class PickUp : MonoBehaviour
                 {
                     carriedObject = hit.collider.GetComponent<GetCarried>();
 
+                    Debug.Log(hit.collider.gameObject.name);
+
                     //an object that can be carried is inside the pickup zone
                     if (carriedObject)
                     {
-						hit.collider.GetComponent<AudioSource>().clip = hit.collider.GetComponent<PlayerController>().audioPickUp;
-						hit.collider.GetComponent<AudioSource>().Play();
+						GetComponent<AudioSource>().clip = GetComponent<PlayerController>().audioPickUp;
+						GetComponent<AudioSource>().Play();
 
                         carriedObject.startCarrying(transform);
                         carrying = true;
