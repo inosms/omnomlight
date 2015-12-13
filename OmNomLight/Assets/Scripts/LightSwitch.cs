@@ -1,21 +1,35 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+[RequireComponent(typeof(AudioSource), typeof(TriggerField))]
 public class LightSwitch : MonoBehaviour 
 {
     public LightSource[] lightSources;
     public bool isOn;
 
-	// Use this for initialization
+    private TriggerField triggerField;
+    private AudioSource audiosource;
+    void Start()
+    {
+        triggerField = GetComponent<TriggerField>();
+        audiosource = GetComponent<AudioSource>();
+    } 
+
 	void Update () 
     {
         updateLights();
+
+        if((triggerField.humanIsHere && Input.GetButtonDown("Pick Up"))
+            || (triggerField.monsterIsHere && Input.GetButtonDown("Pick Up Controller")))
+        {
+            toggle();
+        }
 	}
 
     public void toggle()
     {
         isOn = !isOn;
-        updateLights();
+        audiosource.Play();
     }
 
     private void updateLights()
