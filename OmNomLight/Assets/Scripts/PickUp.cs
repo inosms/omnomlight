@@ -51,7 +51,7 @@ public class PickUp : MonoBehaviour
 
 	private void MonsterAction(GetCarried n_object)
 	{
-		Debug.Log("Monster Action");
+		//Debug.Log("Monster Action");
 		Collectible tmp_food = n_object.GetComponent<Collectible>();
 
 		// only if the object really is food; prevent eating the Candle
