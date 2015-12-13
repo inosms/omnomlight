@@ -103,11 +103,11 @@ public class PlayerController : MonoBehaviour {
             float angle = Vector2.Angle(Vector2.up, moveThisFrame.normalized);
             //Debug.Log(horizontalDirection * angle);
 
-            if (angle < 20.0f)
+            if (angle < 45.0f)
             {
                 spriteRenderer.sprite = up;
             }
-            else if (angle >= 20.0f && angle <= 160.0f)
+            else if (angle >= 45.0f && angle <= 135.0f)
             {
                 spriteRenderer.sprite = (horizontalDirection == -1.0f) ? left : right;
             }
