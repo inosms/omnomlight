@@ -15,7 +15,7 @@ public class FuseBox : MonoBehaviour
 	{
 
 
-		if (Input.GetButtonDown ("Pick Up")) 
+        if (Input.GetButtonDown("Pick Up") || Input.GetButtonDown("Pick Up Controller")) 
 		{
 			// if somebody is at the fuse box, the action is the change the current state
 			if( triggerField.humanIsHere || triggerField.monsterIsHere)

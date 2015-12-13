@@ -90,7 +90,8 @@ public class LightSource : MonoBehaviour
     }
 
     public bool isOn = true;
-    
+    public Light unitylight;
+
 	// for debugging:
 	public bool controlWithMouse = false;
     public bool DrawTriangles = true;
@@ -125,10 +126,15 @@ public class LightSource : MonoBehaviour
         if (((fuseBox && fuseBox.isActivated) || !fuseBox) && isOn)
         {
             calculateLitArea();
+            if (unitylight)
+                unitylight.enabled = true;
         }
         else
         {
             litAreaMesh.Clear();
+
+            if (unitylight)
+                unitylight.enabled = false;
         }
     }
 
