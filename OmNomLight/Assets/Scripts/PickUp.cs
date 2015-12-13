@@ -12,8 +12,10 @@ public class PickUp : MonoBehaviour
 
     void Update()
     {
+		
         if(Input.GetButtonDown("Pick Up"))
         {
+			
             if(!carrying)//currently not carrying anything
             {
 				RaycastHit2D hit = Physics2D.CircleCast(transform.position, range, Vector3.back,range,layerMask);
@@ -22,11 +24,13 @@ public class PickUp : MonoBehaviour
                 if (hit)
                 {
                     carriedObject = hit.collider.GetComponent<GetCarried>();
-					Debug.Log(hit.collider.gameObject.name);
 
                     //an object that can be carried is inside the pickup zone
                     if (carriedObject)
                     {
+						hit.collider.GetComponent<AudioSource>().clip = hit.collider.GetComponent<PlayerController>().audioPickUp;
+						hit.collider.GetComponent<AudioSource>().Play();
+
                         carriedObject.startCarrying(transform);
                         carrying = true;
                     }

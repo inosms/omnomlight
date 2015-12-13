@@ -7,6 +7,12 @@ public class PlayerController : MonoBehaviour {
     public float initialSpeed;
     public float minSpeed;
 
+	public AudioClip audioEating1;
+	public AudioClip audioEating2;
+	public AudioClip audioEating3;
+	public AudioClip audioEating4;
+	public AudioClip audioPickUp;
+
     //appearance related
     public Sprite up, down, left, right;
     private SpriteRenderer spriteRenderer;
