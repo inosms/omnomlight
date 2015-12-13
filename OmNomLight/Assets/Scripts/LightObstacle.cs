@@ -15,7 +15,7 @@ public class LightObstacle : MonoBehaviour
     public static List<PolygonCollider2D> obstacles = new List<PolygonCollider2D>();
 
     // Use this for initialization
-    void Awake()
+    void Start()
     {
         PolygonCollider2D collider = GetComponent<PolygonCollider2D>();
         obstacles.Add(collider);
