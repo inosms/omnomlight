@@ -59,22 +59,22 @@ public class PickUp : MonoBehaviour
 		// only if the object really is food; prevent eating the Candle
 		if( n_object.GetComponent<Collectible>() != null )
 		{
-			// Play on random music clip
-			int tmp_random = Random.Range(0,4);
-			if( tmp_random == 0 )
-				gameObject.GetComponent<AudioSource>().clip = gameObject.GetComponent<PlayerController>().audioEating1;
-			else if( tmp_random == 1)
-				gameObject.GetComponent<AudioSource>().clip = gameObject.GetComponent<PlayerController>().audioEating2;
-			else if( tmp_random == 2 )
-				gameObject.GetComponent<AudioSource>().clip = gameObject.GetComponent<PlayerController>().audioEating3;
-			else
-				gameObject.GetComponent<AudioSource>().clip = gameObject.GetComponent<PlayerController>().audioEating4;
-			gameObject.GetComponent<AudioSource>().Play();
-
 			// When Human holds the object, let the monster not eat stuff
-			if( GameObject.FindObjectOfType<PickUp>().GetCarriedObject() != this.GetComponent<GetCarried>() 
+			if( GameObject.FindWithTag("Human").GetComponent<PickUp>().GetCarriedObject() != n_object.GetComponent<GetCarried>() 
 				&& Time.timeSinceLevelLoad - lastFoodTime > EAT_COOLDOWN_SECONDS )
 			{
+				// Play on random music clip
+				int tmp_random = Random.Range(0,4);
+				if( tmp_random == 0 )
+					gameObject.GetComponent<AudioSource>().clip = gameObject.GetComponent<PlayerController>().audioEating1;
+				else if( tmp_random == 1)
+					gameObject.GetComponent<AudioSource>().clip = gameObject.GetComponent<PlayerController>().audioEating2;
+				else if( tmp_random == 2 )
+					gameObject.GetComponent<AudioSource>().clip = gameObject.GetComponent<PlayerController>().audioEating3;
+				else
+					gameObject.GetComponent<AudioSource>().clip = gameObject.GetComponent<PlayerController>().audioEating4;
+				gameObject.GetComponent<AudioSource>().Play();
+
 				lastFoodTime = Time.timeSinceLevelLoad;
 
 				GameObject.FindObjectOfType<GameState>().MonsterEatsOneFood();

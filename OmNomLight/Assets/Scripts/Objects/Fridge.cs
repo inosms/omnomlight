@@ -100,7 +100,7 @@ public class Fridge : MonoBehaviour {
 			// When the Human just carries something put it in the fridge
 			PickUp tmp_pickUp = human.GetComponent<PickUp>();
 
-			if( tmp_pickUp.GetCarriedObject() != null )
+			if( tmp_pickUp.GetCarriedObject() != null &&  tmp_pickUp.GetCarriedObject().GetComponent<Collectible>() != null )
 			{
 				Collectible tmp_foodThing = tmp_pickUp.GetCarriedObject().GetComponent<Collectible>();
 				// http://answers.unity3d.com/questions/7776/how-to-make-an-gameobject-invisible-and-disappeare.html
