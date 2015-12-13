@@ -22,7 +22,6 @@ public class Fridge : MonoBehaviour {
 	public Sprite fridgeOpenedEmpty;
 	public Sprite fridgeOpenedFull;
 
-	private GameObject monster;
 	private GameObject human;
 	private GameState gameState;
 
@@ -42,7 +41,6 @@ public class Fridge : MonoBehaviour {
 		spriteRenderer = GetComponent<SpriteRenderer>();
 		audioSource = GetComponent<AudioSource>();
 
-		monster = GameObject.FindWithTag("Monster");
 		human = GameObject.FindWithTag("Human");
 		m_fuseBox = GameObject.FindObjectOfType<FuseBox>();
 		gameState = GameObject.FindObjectOfType<GameState>();
