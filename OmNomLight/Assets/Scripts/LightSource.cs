@@ -242,6 +242,11 @@ public class LightSource : MonoBehaviour
             polygonVerts.Add(l.end);
         }
 
+        if (lines.Count == 0)
+        {
+            return;
+        }
+
         polygonVerts = mergeCloseVertices(polygonVerts);
 
         lines = filterLines(lines);

@@ -15,11 +15,11 @@ public class FuseBox : MonoBehaviour
 	{
 
 
-        if (Input.GetButtonDown("Pick Up") || Input.GetButtonDown("Pick Up Controller")) 
+        if ((Input.GetButtonDown("Pick Up") && triggerField.humanIsHere)  
+            || (Input.GetButtonDown("Pick Up Controller") && triggerField.monsterIsHere)) 
 		{
 			// if somebody is at the fuse box, the action is the change the current state
-			if( triggerField.humanIsHere || triggerField.monsterIsHere)
-				isActivated = !isActivated;
+			isActivated = !isActivated;
 		}
 	}
 }
