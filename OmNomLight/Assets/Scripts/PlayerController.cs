@@ -56,12 +56,12 @@ public class PlayerController : MonoBehaviour {
             moveThisFrame = Vector2.zero;
         }
         
+        selectCorrectSprite();
 	}
 
     void FixedUpdate() 
     {
         controller.velocity = moveThisFrame;
-        selectCorrectSprite();
     }
 
     void resolveValidPosition()

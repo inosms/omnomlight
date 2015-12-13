@@ -6,7 +6,7 @@ using System.Collections.Generic;
 public class LightObstacle : MonoBehaviour
 {
     public Gradient gradient;
-    public float LerpSpeed;
+    private float LerpSpeed = 10;
 
     private int lightedCorners = 0;
     private int corners;

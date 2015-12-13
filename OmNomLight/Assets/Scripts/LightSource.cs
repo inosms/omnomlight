@@ -90,16 +90,14 @@ public class LightSource : MonoBehaviour
     }
 
     public bool isOn = true;
+    
+	// for debugging:
+	public bool controlWithMouse = false;
     public bool DrawTriangles = true;
     public bool DrawLines = false;
 
-	// for debugging:
-	public bool controlWithMouse = false;
-
-    //stores all corner points of all light obestacles
-    //stores all line to draw for debugging
     //stores all triangles
-    public List<Triangle> triangles = new List<Triangle>();
+    private List<Triangle> triangles = new List<Triangle>();
 
     public float minimumVertexDistance = 0.1f;
     public Mesh litAreaMesh;
@@ -327,11 +325,12 @@ public class LightSource : MonoBehaviour
         List<Vector3> vertices = new List<Vector3>(triangles.Count * 2 + 1);
         List<int> trianglesList = new List<int>(triangles.Count * 3 + 1);
         List<Vector2> uvList = new List<Vector2>(triangles.Count * 2 + 1);
+        Camera c = Camera.main;
 
         //add center
         vertices.Add(transform.InverseTransformPoint(transform.position));
-        Vector2 uv0 = Camera.main.ScreenToViewportPoint(transform.position);
-        uv0.x = 1 - uv0.x;
+        Vector2 uv0 = c.WorldToViewportPoint(transform.position);
+        uv0 = new Vector2(1 - uv0.x, 1 - uv0.y);//(what???!)
         uvList.Add(uv0);
 
         for (int i = 0; i < triangles.Count - 1; i++)
@@ -342,17 +341,15 @@ public class LightSource : MonoBehaviour
 
             trianglesList.Add(vertices.Count);
             vertices.Add(transform.InverseTransformPoint(t.point2));
-            Vector2 uv1 = Camera.main.ScreenToViewportPoint(t.point2);
-            uv1.x = 1 - uv1.x;
+            Vector2 uv1 = c.WorldToViewportPoint(t.point2);
+            uv1 = new Vector2(1 - uv1.x, 1 - uv1.y);
             uvList.Add(uv1);
-            //uvList.Add(new Vector2(Vector2.Distance(t.point0, t.point2) / longestLength, 0));
 
             trianglesList.Add(vertices.Count);
             vertices.Add(transform.InverseTransformPoint(t.point1));
-            Vector2 uv2 = Camera.main.ScreenToViewportPoint(t.point1);
-            uv2.x = 1 - uv2.x;
+            Vector2 uv2 = c.WorldToViewportPoint(t.point1);
+            uv2 = new Vector2(1 - uv2.x, 1 - uv2.y);
             uvList.Add(uv2);
-            //uvList.Add(new Vector2(Vector2.Distance(t.point0, t.point1) / longestLength, 0));
         }
         //add last triangle
         trianglesList.AddRange(new int[] { 2, vertices.Count - 2, 0 });
