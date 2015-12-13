@@ -8,7 +8,19 @@ public class Collectible : MonoBehaviour
     {
         if(c.CompareTag("Monster"))
         {
-            OnPickup();    
+            OnPickup();
+
+			// Play on random music clip
+			int tmp_random = Random.Range(0,4);
+			if( tmp_random == 0 )
+				c.GetComponent<AudioSource>().clip = c.GetComponent<PlayerController>().audioEating1;
+			else if( tmp_random == 1)
+				c.GetComponent<AudioSource>().clip = c.GetComponent<PlayerController>().audioEating2;
+			else if( tmp_random == 2 )
+				c.GetComponent<AudioSource>().clip = c.GetComponent<PlayerController>().audioEating3;
+			else
+				c.GetComponent<AudioSource>().clip = c.GetComponent<PlayerController>().audioEating4;
+			c.GetComponent<AudioSource>().Play();
         }
     }
 
