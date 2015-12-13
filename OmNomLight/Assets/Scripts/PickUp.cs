@@ -77,8 +77,6 @@ public class PickUp : MonoBehaviour
 
 				GameObject.FindObjectOfType<GameState>().MonsterEatsOneFood();
 
-				GameObject.FindObjectOfType<PickUp>().StopCarrying();
-
 				n_object.gameObject.SetActive(false);
 
 				Destroy(n_object.gameObject, 0.3f);
