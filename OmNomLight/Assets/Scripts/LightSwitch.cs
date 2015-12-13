@@ -1,12 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class LightSwitch : MonoBehaviour {
+public class LightSwitch : MonoBehaviour 
+{
     public LightSource[] lightSources;
     public bool isOn;
 
 	// Use this for initialization
-	void Start () {
+	void Update () 
+    {
         updateLights();
 	}
 
