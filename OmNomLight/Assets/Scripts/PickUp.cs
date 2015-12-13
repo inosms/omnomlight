@@ -39,7 +39,7 @@ public class PickUp : MonoBehaviour
                     }
                 }
             }
-            else if (carriedObject)
+			else if (carriedObject && gameObject.CompareTag("Human") && Input.GetButtonDown("Pick Up") )
             {
 				// only drop the object when not directly in front of fridge,
 				// as one wants to put the food into the fridge in this case
