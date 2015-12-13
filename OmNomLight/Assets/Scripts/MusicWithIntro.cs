@@ -12,6 +12,7 @@ public class MusicWithIntro : MonoBehaviour
 	public AudioClip humanLoop;
 	public AudioClip monsterIntro;
 	public AudioClip monsterLoop;
+    public AudioClip startJingle;
 
     void Start()
     {
@@ -29,7 +30,7 @@ public class MusicWithIntro : MonoBehaviour
 
         musicPlayer = gameObject.GetComponent<AudioSource>();
 
-        musicPlayer.clip = intro;
+        musicPlayer.clip = startJingle;
         musicPlayer.loop = false;
         musicPlayer.Play();
     }
@@ -37,7 +38,16 @@ public class MusicWithIntro : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
     {
-        if (!musicPlayer.isPlaying)
+        if (musicPlayer.clip == startJingle && !musicPlayer.isPlaying)
+        {
+            //start playing music
+            musicPlayer.clip = intro;
+            musicPlayer.loop = false;
+            musicPlayer.Play();
+        }
+
+        //loop music after intro is over
+        if (musicPlayer.clip == intro && !musicPlayer.isPlaying)
         {
             musicPlayer.clip = loop;
             musicPlayer.loop = true;
