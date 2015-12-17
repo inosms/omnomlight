@@ -29,6 +29,18 @@ public struct Line
     {
         return right < left;
     }
+
+    public static bool isBetween (Line left, Line between, Line right)
+    {
+        if(left > right)
+        {
+            return !isBetween(right, between, left);
+        }
+        else
+        {
+            return between > left && right > between;
+        }
+    }
 }
 
 public struct Triangle
@@ -96,6 +108,8 @@ public class LightSource : MonoBehaviour
 	public bool controlWithMouse = false;
     public bool DrawTriangles = true;
     public bool DrawLines = false;
+    
+    public int vertices;
 
     //stores all triangles
     private List<Triangle> triangles = new List<Triangle>();
@@ -138,16 +152,6 @@ public class LightSource : MonoBehaviour
         }
     }
 
-    protected virtual List<Vector2> addCustomCorners()
-    {
-        return null;
-    }
-
-    protected virtual List<Line> filterLines(List<Line> lines)
-    {
-        return lines;
-    }
-
     private List<Vector2> getCorners()
     {
         List<Vector2> result = new List<Vector2>();
@@ -174,13 +178,6 @@ public class LightSource : MonoBehaviour
 
         //get all lightobstacles
         List<Vector2> corners = getCorners();
-
-        //get custom corners
-        List<Vector2> moreCorners = addCustomCorners();
-        if (moreCorners != null)
-        {
-            corners.AddRange(moreCorners);
-        }
 
         //calculate intersection points
         List<Line> lines = new List<Line>();
@@ -233,23 +230,13 @@ public class LightSource : MonoBehaviour
 
         sortLinesByDirection(lines);
 
-        List<Vector2> polygonVerts = new List<Vector2>();
-        //draw lines into scene
-        for (int i = 0; i < lines.Count; i++)
-        {
-            Line l = lines[i];
-
-            polygonVerts.Add(l.end);
-        }
-
         if (lines.Count == 0)
         {
             return;
         }
-
-        polygonVerts = mergeCloseVertices(polygonVerts);
-
-        lines = filterLines(lines);
+       
+        //Merges similar lines
+        lines = mergeCloseLines(lines);
 
         if (lines.Count == 0)
         {
@@ -298,28 +285,31 @@ public class LightSource : MonoBehaviour
         lines.Sort(new LineSorter());
     }
 
-    List<Vector2> mergeCloseVertices(List<Vector2> vertices)
+    List<Line> mergeCloseLines(List<Line> lines)
     {
-        List<Vector2> result = new List<Vector2>();
-        result.Add(vertices[0]);
+        List<Line> result = new List<Line>();
+        result.Add(lines[0]);
 
-        foreach (Vector2 v1 in vertices)
+        foreach(Line l1 in lines)
         {
             bool isUnique = true;
+            Vector2 v1 = l1.end;
 
-            foreach (Vector2 v2 in result)
+            foreach(Line l2 in result)
             {
+                Vector2 v2 = l2.end;
                 //check if another vertex that is basically the same is already in result
                 if (Vector2.Distance(v1, v2) <= minimumVertexDistance)
                 {
                     isUnique = false;
+                    break;
                 }
             }
 
             //add if unique
             if (isUnique)
             {
-                result.Add(v1);
+                result.Add(l1);
             }
         }
 
@@ -367,6 +357,9 @@ public class LightSource : MonoBehaviour
         litAreaMesh.SetUVs(0, uvList);
 
         litAreaMesh.RecalculateNormals();
+
+        //show amount of vertices in inspector
+        this.vertices = vertices.Count;
     }
 
     private float longestLineLength(List<Line> lines)
