@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 public struct Line
 {
@@ -40,6 +41,16 @@ public struct Line
         {
             return between > left && right > between;
         }
+    }
+    
+    public static bool operator == (Line left, Line right)
+    {
+        return (left.start == right.start && left.end == right.end) || (left.start == right.end && left.end == right.start);
+    }
+
+    public static bool operator !=(Line left, Line right)
+    {
+        return !(left == right);
     }
 }
 
@@ -86,6 +97,7 @@ public class LineSorter : IComparer<Line>
 public class LightSource : MonoBehaviour
 {
     public static List<LightSource> lightSources = new List<LightSource>();
+    public static Vector2[] cornersOfRoom;
 
     public static bool isLit(Vector2 point)
     {
@@ -103,6 +115,9 @@ public class LightSource : MonoBehaviour
 
     public bool isOn = true;
     public Light unitylight;
+    public float minimumVertexDistance = 0.1f;
+    public Mesh litAreaMesh;
+    public FuseBox fuseBox;
 
 	// for debugging:
 	public bool controlWithMouse = false;
@@ -113,15 +128,13 @@ public class LightSource : MonoBehaviour
 
     //stores all triangles
     private List<Triangle> triangles = new List<Triangle>();
-
-    public float minimumVertexDistance = 0.1f;
-    public Mesh litAreaMesh;
-    public FuseBox fuseBox;
-
+    private CircularDepthBuffer depthBuffer;
+    
     void Start()
     {
         lightSources.Add(this);
         litAreaMesh = GetComponent<MeshFilter>().mesh;
+        depthBuffer = new CircularDepthBuffer(transform.position);
     }
 
     // Update is called once per frame
@@ -155,24 +168,23 @@ public class LightSource : MonoBehaviour
     private List<Vector2> getCorners()
     {
         List<Vector2> result = new List<Vector2>();
-        List<PolygonCollider2D> obstacles = LightObstacle.obstacles;
-        foreach (PolygonCollider2D collider in obstacles)
-        {
-            //get corners of obstacle
-            Vector2[] points = collider.points;
-            Transform t = collider.transform;
+        depthBuffer.Clear();
 
-            //Transform all corners to world space
-            for (int i = 0; i < points.Length; i++)
-            {
-                result.Add(t.TransformPoint(points[i]));
-            }
-        }
+        depthBuffer.center = transform.position;
+        depthBuffer.Fill(LightObstacle.obstacles);
+
+        result = depthBuffer.GetVisibleCorners();
+        
+        if(cornersOfRoom != null && cornersOfRoom.Length > 0)
+            result.AddRange(cornersOfRoom);
+
         return result;
     }
 
     void calculateLitArea()
     {
+        litAreaMesh.Clear();
+
         //Point of lightsource
         Vector2 pos = transform.position;
 
@@ -228,17 +240,17 @@ public class LightSource : MonoBehaviour
             }
         }
 
-        sortLinesByDirection(lines);
-
-        if (lines.Count == 0)
+        if (lines.Count <= 1)
         {
             return;
         }
+
+        sortLinesByDirection(lines);
        
         //Merges similar lines
         lines = mergeCloseLines(lines);
 
-        if (lines.Count == 0)
+        if (lines.Count <= 1)
         {
             return;
         }
@@ -253,14 +265,14 @@ public class LightSource : MonoBehaviour
 
             triangles.Add(t);
         }
-
+        
         //create last triangle
         Triangle lastT = new Triangle();
         lastT.point0 = pos;
         lastT.point1 = lines[0].end;
         lastT.point2 = lines[lines.Count - 1].end;
         triangles.Add(lastT);
-
+       
         generateMesh(triangles, lines);
 
         if (DrawTriangles)
@@ -280,17 +292,18 @@ public class LightSource : MonoBehaviour
         }
     }
 
-    void sortLinesByDirection(List<Line> lines)
+    private void sortLinesByDirection(List<Line> lines)
     {
         lines.Sort(new LineSorter());
     }
 
-    List<Line> mergeCloseLines(List<Line> lines)
+    private List<Line> mergeCloseLines(List<Line> lines)
     {
         List<Line> result = new List<Line>();
         result.Add(lines[0]);
+        float minDist = minimumVertexDistance * minimumVertexDistance;
 
-        foreach(Line l1 in lines)
+        foreach (Line l1 in lines)
         {
             bool isUnique = true;
             Vector2 v1 = l1.end;
@@ -299,7 +312,7 @@ public class LightSource : MonoBehaviour
             {
                 Vector2 v2 = l2.end;
                 //check if another vertex that is basically the same is already in result
-                if (Vector2.Distance(v1, v2) <= minimumVertexDistance)
+                if ((v2 - v1).SqrMagnitude() <=  minDist)
                 {
                     isUnique = false;
                     break;
@@ -316,9 +329,13 @@ public class LightSource : MonoBehaviour
         return result;
     }
 
-    void generateMesh(List<Triangle> triangles, List<Line> lines)
+    private void generateMesh(List<Triangle> triangles, List<Line> lines)
     {
-        litAreaMesh.Clear();
+        //if there are less than 2 lines, we cant form a triangle
+        if(lines.Count <= 1)
+        {
+            return;
+        }
 
         List<Vector3> vertices = new List<Vector3>(triangles.Count * 2 + 1);
         List<int> trianglesList = new List<int>(triangles.Count * 3 + 1);
@@ -362,27 +379,15 @@ public class LightSource : MonoBehaviour
         this.vertices = vertices.Count;
     }
 
-    private float longestLineLength(List<Line> lines)
-    {
-        float result = 0;
-
-        foreach (Line l in lines)
-        {
-            float dist = Vector2.Distance(l.start, l.end);
-            if (dist > result)
-                result = dist;
-        }
-
-        return result;
-    }
-
     //see http://stackoverflow.com/questions/2049582/how-to-determine-a-point-in-a-2d-triangle
     private bool lightsPoint(Vector2 point)
     {
         if (!isOn || triangles.Count == 0)
             return false;
 
-        foreach (Triangle t in triangles)
+        return triangles.Any(t => t.isPointInside(point));
+
+        /*foreach (Triangle t in triangles)
         {
             if (t.isPointInside(point))
             {
@@ -390,7 +395,7 @@ public class LightSource : MonoBehaviour
             }
         }
 
-        return false;
+        return false;*/
     }
 
     public void SetIsOn(bool isOn)
