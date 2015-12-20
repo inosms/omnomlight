@@ -111,7 +111,7 @@ public class Fridge : MonoBehaviour {
 				audioSource.clip = audioPutInFridge;
 				audioSource.Play();
 
-				Debug.Log("Added thing to fridge");
+				//Debug.Log("Added thing to fridge");
 				tmp_pickUp.StopCarrying();
 			}
 			// otherwise close the door
